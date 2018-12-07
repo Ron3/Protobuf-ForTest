@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='settingData',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bskill.proto\x12\x0bsettingData\"/\n\x05Skill\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x65sc\x18\x03 \x02(\t')
+  serialized_pb=_b('\n\x0bskill.proto\x12\x0bsettingData\"4\n\x05Skill\x12\x0f\n\x07skillId\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x65sc\x18\x03 \x02(\t')
 )
 
 
@@ -33,7 +33,7 @@ _SKILL = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='settingData.Skill.id', index=0,
+      name='skillId', full_name='settingData.Skill.skillId', index=0,
       number=1, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -66,7 +66,7 @@ _SKILL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=28,
-  serialized_end=75,
+  serialized_end=80,
 )
 
 DESCRIPTOR.message_types_by_name['Skill'] = _SKILL
