@@ -7,7 +7,9 @@ message Skill{
     required string desc = 3;
 }
 
-
+message SkillArray {
+  repeated Skill skill = 1;
+}
 
 
 

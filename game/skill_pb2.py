@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='settingData',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bskill.proto\x12\x0bsettingData\"4\n\x05Skill\x12\x0f\n\x07skillId\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x65sc\x18\x03 \x02(\t')
+  serialized_pb=_b('\n\x0bskill.proto\x12\x0bsettingData\"4\n\x05Skill\x12\x0f\n\x07skillId\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04\x64\x65sc\x18\x03 \x02(\t\"/\n\nSkillArray\x12!\n\x05skill\x18\x01 \x03(\x0b\x32\x12.settingData.Skill')
 )
 
 
@@ -69,7 +69,40 @@ _SKILL = _descriptor.Descriptor(
   serialized_end=80,
 )
 
+
+_SKILLARRAY = _descriptor.Descriptor(
+  name='SkillArray',
+  full_name='settingData.SkillArray',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='skill', full_name='settingData.SkillArray.skill', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=82,
+  serialized_end=129,
+)
+
+_SKILLARRAY.fields_by_name['skill'].message_type = _SKILL
 DESCRIPTOR.message_types_by_name['Skill'] = _SKILL
+DESCRIPTOR.message_types_by_name['SkillArray'] = _SKILLARRAY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Skill = _reflection.GeneratedProtocolMessageType('Skill', (_message.Message,), dict(
@@ -78,6 +111,13 @@ Skill = _reflection.GeneratedProtocolMessageType('Skill', (_message.Message,), d
   # @@protoc_insertion_point(class_scope:settingData.Skill)
   ))
 _sym_db.RegisterMessage(Skill)
+
+SkillArray = _reflection.GeneratedProtocolMessageType('SkillArray', (_message.Message,), dict(
+  DESCRIPTOR = _SKILLARRAY,
+  __module__ = 'skill_pb2'
+  # @@protoc_insertion_point(class_scope:settingData.SkillArray)
+  ))
+_sym_db.RegisterMessage(SkillArray)
 
 
 # @@protoc_insertion_point(module_scope)
