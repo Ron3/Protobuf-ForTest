@@ -62,6 +62,7 @@ namespace BPParse
                 while(enumerator.MoveNext())
                 {
                     ISheet sheetObj = (ISheet)enumerator.Current;
+                    this._ParseSingleSheet(sheetObj);
                 }
             }
         }
@@ -77,6 +78,17 @@ namespace BPParse
                 return;
             }
 
+            Console.WriteLine("Parse sheet ==> " + sheetObj.SheetName);
+
+            //找到这个表的第一个行
+            sheetObj.GetEnumerator();
+            IRow titleRow = sheetObj.GetRow(0);
+            int cellCount = sheetObj.GetRow(0).LastCellNum;
+            for(int i = 0; i < cellCount; ++i)
+            {
+                var val = titleRow.GetCell(i);
+                Console.WriteLine("Title Val ==> " + val);
+            }
         }
 
 
