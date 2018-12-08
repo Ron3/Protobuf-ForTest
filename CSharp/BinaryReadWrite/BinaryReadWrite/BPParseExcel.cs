@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using NPOI.HSSF.UserModel;
 
 
 namespace BPParse
@@ -80,18 +81,116 @@ namespace BPParse
 
             Console.WriteLine("Parse sheet ==> " + sheetObj.SheetName);
 
-            //找到这个表的第一个行
-            sheetObj.GetEnumerator();
+            // 找到这个表的标题.
+            List<string> titleList = new List<String>();
             IRow titleRow = sheetObj.GetRow(0);
-            int cellCount = sheetObj.GetRow(0).LastCellNum;
+            int cellCount = titleRow.LastCellNum;
             for(int i = 0; i < cellCount; ++i)
             {
-                var val = titleRow.GetCell(i);
-                Console.WriteLine("Title Val ==> " + val);
+                string title = GetCellString(titleRow.GetCell(i));
+                if(this._IsValid(title) == false){
+                    break;
+                }
+
+                Console.WriteLine("Title Val ==> " + title);
+                titleList.Add(title);
+            }
+
+            // 接在开始解析每一行的数据
+            Console.WriteLine("sheetObj.LastRowNum ==> " + sheetObj.LastRowNum);
+            for(int rowIndex = 1; rowIndex < sheetObj.LastRowNum; ++rowIndex)
+            {
+                IRow rowObj = sheetObj.GetRow(rowIndex);
+                if(rowObj == null){
+                    break;
+                }
+
+                for (int colIndex = 0; colIndex < titleList.Count; ++colIndex)
+                {
+                    string val = GetCellString(rowObj.GetCell(colIndex));
+                    Console.WriteLine("val ==> " + val);
+                }
             }
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string Convert(string type, string value)
+        {
+            switch (type)
+            {
+                case "int[]":
+                case "int32[]":
+                case "long[]":
+                    return $"[{value}]";
+                case "string[]":
+                    return $"[{value}]";
+                case "int":
+                case "int32":
+                case "int64":
+                case "long":
+                case "float":
+                case "double":
+                    return value;
+                case "string":
+                    return $"\"{value}\"";
+                default:
+                    throw new Exception($"不支持此类型: {type}");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
+        private static string GetCellString(ISheet sheet, int i, int j)
+        {
+            return sheet.GetRow(i)?.GetCell(j)?.ToString() ?? "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        private static string GetCellString(IRow row, int i)
+        {
+            return row?.GetCell(i)?.ToString() ?? "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <returns></returns>
+        private static string GetCellString(ICell cell)
+        {
+            return cell?.ToString() ?? "";
+        }
+
+
+        /// <summary>
+        /// 判定这个标题是否有效
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private bool _IsValid(string title)
+        {
+            if(title.Length > 0){
+                return true;
+            }
+
+            return false;
+        }
 
         #endregion
 
