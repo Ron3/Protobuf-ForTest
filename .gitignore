@@ -104,3 +104,8 @@ venv.bak/
 .mypy_cache/
 .idea/
 *.dat
+CSharp/BinaryReadWrite/.vs/
+CSharp/BinaryReadWrite/BinaryReadWrite/bin/
+CSharp/BinaryReadWrite/BinaryReadWrite/obj/
+CSharp/BinaryReadWrite/BinaryReadWrite/.vscode/
+CSharp/BinaryReadWrite/BinaryReadWrite/pay.xlsx
