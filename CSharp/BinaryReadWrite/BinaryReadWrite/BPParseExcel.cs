@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
+using Newtonsoft.Json;
 
 
 namespace BPParse
@@ -96,20 +99,33 @@ namespace BPParse
                 titleList.Add(title);
             }
 
+            // 转成数组.方便后面操作
+            string[] titleArray = titleList.ToArray();
+
             // 接在开始解析每一行的数据
             Console.WriteLine("sheetObj.LastRowNum ==> " + sheetObj.LastRowNum);
             for(int rowIndex = 1; rowIndex < sheetObj.LastRowNum; ++rowIndex)
             {
                 IRow rowObj = sheetObj.GetRow(rowIndex);
                 if(rowObj == null){
-                    break;
+                    continue;
                 }
 
-                for (int colIndex = 0; colIndex < titleList.Count; ++colIndex)
-                {
-                    string val = GetCellString(rowObj.GetCell(colIndex));
-                    Console.WriteLine("val ==> " + val);
-                }
+                // 得到一行json数据
+                this._WriteToJson(rowObj, sheetObj.SheetName, titleArray);
+
+                // // 这里取要注意.就是取标题头的.
+                // for (int colIndex = 0; colIndex < titleList.Count; ++colIndex)
+                // {
+                //     ICell cellObj = rowObj.GetCell(colIndex);
+                //     if(cellObj == null)
+                //         continue;
+
+                //     this._WriteToJson(cellObj, sheetObj.SheetName, titleArray);
+
+                //     // string val = GetCellString(rowObj.GetCell(colIndex));
+                //     // Console.WriteLine("val ==> " + val);
+                // }
             }
         }
 
@@ -190,6 +206,91 @@ namespace BPParse
             }
 
             return false;
+        }
+
+
+        /// <summary>
+        /// 写json格式
+        /// </summary>
+        /// <param name="rowObj"></param>
+        /// <param name="sheetName"></param>
+        private string _WriteToJson(IRow rowObj, string sheetName, string[] titleArray)
+        {
+            if(rowObj == null){
+                return null;
+            }
+
+            // 1, 找到对应的类名
+            string className;
+            if(JsonObjectConfig.jsonConfigDic.TryGetValue(sheetName, out className) == false){
+                this._Exit("找不到对应的json解析类.");
+                return null;
+            }
+
+            // 2, 然后通过反射
+            Type t = Type.GetType(className);
+            Console.WriteLine("t ==> " + t);
+
+            var obj = System.Activator.CreateInstance(t);
+            BPSetting.BPPay payObj = (BPSetting.BPPay)obj;
+            payObj.PayID = 1;
+
+            List<BPSetting.BPPay> listPay = new List<BPSetting.BPPay>();
+            listPay.Add(payObj);
+
+            string jsonData = JsonConvert.SerializeObject(listPay);
+            Console.WriteLine("jsonData ==> " + jsonData);
+
+            return "";
+            
+            // switch(cellObj.CellType)
+            // {
+            //     case CellType.Unknown:
+            //     {
+            //         // Console.WriteLine("读取到一个字段未知类型异常.进程退出.标题===> " + titleArray[colIndex]);
+                    
+            //         break;
+            //     }
+                
+            //     case CellType.Numeric:
+            //     {
+                    
+            //         break;
+            //     }
+                
+            //     case CellType.String:
+            //         break;
+
+            //     case CellType.Formula:
+            //         break;
+
+            //     case CellType.Blank:
+            //         break;
+
+            //     case CellType.Boolean:
+            //         break;
+
+            //     case CellType.Error:
+            //         break;
+
+            //     default:
+            //         break;
+            // }
+
+            // return null;
+        }
+
+        /// <summary>
+        /// 退出
+        /// </summary>
+        /// <param name="errMsg"></param>
+        private void _Exit(string errMsg="")
+        {
+            if(errMsg.Length > 0){
+                Console.WriteLine("[发生错误.停止解析] errMsg ==> " + errMsg);
+            }
+            
+            Process.GetCurrentProcess().Kill();
         }
 
         #endregion

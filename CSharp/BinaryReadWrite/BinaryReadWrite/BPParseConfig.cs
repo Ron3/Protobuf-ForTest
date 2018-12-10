@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 
 namespace BPParse
 {
@@ -6,5 +6,13 @@ namespace BPParse
     {
         public static string excelDir = "";
         
+    }
+
+    public class JsonObjectConfig
+    {
+        public static Dictionary<string, string> jsonConfigDic = new Dictionary<string, string>
+        {
+            {"pay", "BPSetting.BPPay"}
+        };
     }
 }
