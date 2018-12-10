@@ -110,3 +110,4 @@ CSharp/BinaryReadWrite/BinaryReadWrite/obj/
 CSharp/BinaryReadWrite/BinaryReadWrite/.vscode/
 CSharp/BinaryReadWrite/BinaryReadWrite/pay.xlsx
 *.txt
+*.dat

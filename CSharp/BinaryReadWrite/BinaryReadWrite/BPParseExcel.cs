@@ -67,9 +67,68 @@ namespace BPParse
                 while(enumerator.MoveNext())
                 {
                     ISheet sheetObj = (ISheet)enumerator.Current;
-                    this._ParseSingleSheet(sheetObj);
+                    // this._ParseSingleSheet(sheetObj);
+                    this._ParseSingleSheetToBinaryStream(sheetObj);
                 }
             }
+        }
+
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheetObj"></param>
+        private void _ParseSingleSheetToBinaryStream(ISheet sheetObj)
+        {
+            if(sheetObj == null){
+                return;
+            }
+
+            Console.WriteLine("Parse sheet ==> " + sheetObj.SheetName);
+
+            // 找到这个表的标题.
+            List<string> titleList = new List<String>();
+            IRow titleRow = sheetObj.GetRow(0);
+            int cellCount = titleRow.LastCellNum;
+            for(int i = 0; i < cellCount; ++i)
+            {
+                string title = GetCellString(titleRow.GetCell(i));
+                if(this._IsValid(title) == false){
+                    break;
+                }
+
+                Console.WriteLine("Title Val ==> " + title);
+                titleList.Add(title);
+            }
+
+            string[] titleArray = titleList.ToArray();
+
+            // 写文件的
+            FileStream fs = new FileStream(sheetObj.SheetName + ".dat", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            BinaryWriter writeObj = new BinaryWriter(fs);
+            
+            // 然后开始解析每一行
+            for(int rowIndex = 1; rowIndex < sheetObj.LastRowNum; ++rowIndex)
+            {
+                IRow rowObj = sheetObj.GetRow(rowIndex);
+                if(rowObj == null){
+                    continue;
+                }
+
+                // 直接写二进制
+                for (int colIndex = 0; colIndex < titleArray.Length; ++colIndex)
+                {
+                    ICell cellObj = rowObj.GetCell(colIndex);
+                    if(cellObj == null)
+                        continue;
+                    
+                    string cellVal = cellObj.ToString();
+                    writeObj.Write(cellVal);
+                }
+            }
+            
+            fs.Close();
+            writeObj.Close();
         }
 
 
