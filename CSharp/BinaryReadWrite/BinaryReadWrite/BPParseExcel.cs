@@ -111,8 +111,11 @@ namespace BPParse
                     continue;
                 }
 
+                // 解释成一个object
+                this._ParseToObject(rowObj, sheetObj.SheetName, titleArray);
+
                 // 得到一行json数据
-                this._WriteToJson(rowObj, sheetObj.SheetName, titleArray);
+                // this._WriteToJson(rowObj, sheetObj.SheetName, titleArray);
 
                 // // 这里取要注意.就是取标题头的.
                 // for (int colIndex = 0; colIndex < titleList.Count; ++colIndex)
@@ -210,6 +213,36 @@ namespace BPParse
 
 
         /// <summary>
+        /// 解释成一个对象.
+        /// </summary>
+        /// <param name="rowObj"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="titleArray"></param>
+        /// <returns></returns>
+        private object _ParseToObject(IRow rowObj, string sheetName, string[] titleArray)
+        {
+            if(rowObj == null){
+                return null;
+            }
+
+            // 1, 找到对应的类名
+            string className;
+            if(JsonObjectConfig.jsonConfigDic.TryGetValue(sheetName, out className) == false){
+                this._Exit("找不到对应的json解析类.");
+                return null;
+            }
+
+            // 2, 创建出对应的类
+            Type t = Type.GetType(className);
+            BPSetting.BPObject obj = (BPSetting.BPObject)System.Activator.CreateInstance(t);
+            obj.fromExcelRow(rowObj, titleArray);
+
+            // 3, 
+            return obj;
+        }
+
+        /**
+        /// <summary>
         /// 写json格式
         /// </summary>
         /// <param name="rowObj"></param>
@@ -235,10 +268,7 @@ namespace BPParse
             BPSetting.BPPay payObj = (BPSetting.BPPay)obj;
             payObj.PayID = 1;
 
-            List<BPSetting.BPPay> listPay = new List<BPSetting.BPPay>();
-            listPay.Add(payObj);
-
-            string jsonData = JsonConvert.SerializeObject(listPay);
+            string jsonData = JsonConvert.SerializeObject(payObj);
             Console.WriteLine("jsonData ==> " + jsonData);
 
             return "";
@@ -279,6 +309,7 @@ namespace BPParse
 
             // return null;
         }
+         */
 
         /// <summary>
         /// 退出
