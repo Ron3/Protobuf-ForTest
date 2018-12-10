@@ -104,6 +104,8 @@ namespace BPParse
 
             // 接在开始解析每一行的数据
             Console.WriteLine("sheetObj.LastRowNum ==> " + sheetObj.LastRowNum);
+            
+            List<object> settingObjectList = new List<object>();
             for(int rowIndex = 1; rowIndex < sheetObj.LastRowNum; ++rowIndex)
             {
                 IRow rowObj = sheetObj.GetRow(rowIndex);
@@ -112,7 +114,8 @@ namespace BPParse
                 }
 
                 // 解释成一个object
-                this._ParseToObject(rowObj, sheetObj.SheetName, titleArray);
+                object obj = this._ParseToObject(rowObj, sheetObj.SheetName, titleArray);
+                settingObjectList.Add(obj);
 
                 // 得到一行json数据
                 // this._WriteToJson(rowObj, sheetObj.SheetName, titleArray);
@@ -130,6 +133,13 @@ namespace BPParse
                 //     // Console.WriteLine("val ==> " + val);
                 // }
             }
+
+            string data = JsonConvert.SerializeObject(settingObjectList);
+            FileStream fs1 = new FileStream("pay.txt", FileMode.Create, FileAccess.Write);
+            StreamWriter streamWriter = new StreamWriter(fs1);
+            streamWriter.WriteLine(data); 
+            streamWriter.Close();
+            fs1.Close();   
         }
 
 

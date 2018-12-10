@@ -15,6 +15,11 @@ namespace BPSetting
         // productId
         public string ProductId{get; set;}
 
+        // string
+        public string JsonData{get; set;}
+        public Dictionary<string, object> jsonDic = new Dictionary<string, object>();
+        
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -42,14 +47,15 @@ namespace BPSetting
                     continue;
 
                 string strTitle = titleArray[colIndex];
-                Dictionary<string, object> dic = new Dictionary<string, object>();
-                dic.Add(strTitle, cellObj.ToString());
+                this.jsonDic.Add(strTitle, cellObj.ToString());
+
+                // Dictionary<string, object> dic = new Dictionary<string, object>();
+                // dic.Add(strTitle, cellObj.ToString());
                 
                 // 这里可以直接序列化标题 + 值了.不过所有序列化的值都是字符串
-                // string jsonData = JsonConvert.SerializeObject(dic);
-                // Console.WriteLine("dic ==> " + jsonData);
-                
+                // this.JsonData = JsonConvert.SerializeObject(dic);
 
+                // Console.WriteLine("dic ==> " + this.JsonData);
                 // switch(cellObj.CellType)
                 // {
                 //     case CellType.Unknown:
