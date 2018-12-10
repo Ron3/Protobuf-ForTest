@@ -9,6 +9,7 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using Newtonsoft.Json;
 
+using System.Dynamic;
 
 namespace BPParse
 {
@@ -114,32 +115,29 @@ namespace BPParse
                 }
 
                 // 解释成一个object
-                object obj = this._ParseToObject(rowObj, sheetObj.SheetName, titleArray);
-                settingObjectList.Add(obj);
+                // object obj = this._ParseToObject(rowObj, sheetObj.SheetName, titleArray);
 
-                // 得到一行json数据
-                // this._WriteToJson(rowObj, sheetObj.SheetName, titleArray);
+                // 直接在这里解释成一个json
+                Dictionary<string, object> jsonDic = new Dictionary<string, object>();
+                for (int colIndex = 0; colIndex < titleArray.Length; ++colIndex)
+                {
+                    ICell cellObj = rowObj.GetCell(colIndex);
+                    if(cellObj == null)
+                        continue;
 
-                // // 这里取要注意.就是取标题头的.
-                // for (int colIndex = 0; colIndex < titleList.Count; ++colIndex)
-                // {
-                //     ICell cellObj = rowObj.GetCell(colIndex);
-                //     if(cellObj == null)
-                //         continue;
-
-                //     this._WriteToJson(cellObj, sheetObj.SheetName, titleArray);
-
-                //     // string val = GetCellString(rowObj.GetCell(colIndex));
-                //     // Console.WriteLine("val ==> " + val);
-                // }
+                    string strTitle = titleArray[colIndex];
+                    jsonDic.Add(strTitle, cellObj.ToString());
+                }
+            
+                settingObjectList.Add(jsonDic);
             }
 
             string data = JsonConvert.SerializeObject(settingObjectList);
-            FileStream fs1 = new FileStream("pay.txt", FileMode.Create, FileAccess.Write);
+            FileStream fs1 = new FileStream(sheetObj.SheetName + ".txt", FileMode.Create, FileAccess.Write);
             StreamWriter streamWriter = new StreamWriter(fs1);
             streamWriter.WriteLine(data); 
             streamWriter.Close();
-            fs1.Close();   
+            fs1.Close();
         }
 
 
@@ -250,76 +248,6 @@ namespace BPParse
             // 3, 
             return obj;
         }
-
-        /**
-        /// <summary>
-        /// 写json格式
-        /// </summary>
-        /// <param name="rowObj"></param>
-        /// <param name="sheetName"></param>
-        private string _WriteToJson(IRow rowObj, string sheetName, string[] titleArray)
-        {
-            if(rowObj == null){
-                return null;
-            }
-
-            // 1, 找到对应的类名
-            string className;
-            if(JsonObjectConfig.jsonConfigDic.TryGetValue(sheetName, out className) == false){
-                this._Exit("找不到对应的json解析类.");
-                return null;
-            }
-
-            // 2, 然后通过反射
-            Type t = Type.GetType(className);
-            Console.WriteLine("t ==> " + t);
-
-            var obj = System.Activator.CreateInstance(t);
-            BPSetting.BPPay payObj = (BPSetting.BPPay)obj;
-            payObj.PayID = 1;
-
-            string jsonData = JsonConvert.SerializeObject(payObj);
-            Console.WriteLine("jsonData ==> " + jsonData);
-
-            return "";
-            
-            // switch(cellObj.CellType)
-            // {
-            //     case CellType.Unknown:
-            //     {
-            //         // Console.WriteLine("读取到一个字段未知类型异常.进程退出.标题===> " + titleArray[colIndex]);
-                    
-            //         break;
-            //     }
-                
-            //     case CellType.Numeric:
-            //     {
-                    
-            //         break;
-            //     }
-                
-            //     case CellType.String:
-            //         break;
-
-            //     case CellType.Formula:
-            //         break;
-
-            //     case CellType.Blank:
-            //         break;
-
-            //     case CellType.Boolean:
-            //         break;
-
-            //     case CellType.Error:
-            //         break;
-
-            //     default:
-            //         break;
-            // }
-
-            // return null;
-        }
-         */
 
         /// <summary>
         /// 退出
